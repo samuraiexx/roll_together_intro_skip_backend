@@ -1,11 +1,5 @@
-import {CosmosClient, ItemDefinition} from '@azure/cosmos';
+import {CosmosClient} from '@azure/cosmos';
 import _ from 'lodash';
-
-interface EpisodesInfo {
-  episode: number;
-  marks: Marks;
-  mediaId: number;
-}
 
 interface Marks {
   begin: number;
@@ -29,31 +23,12 @@ export async function getStoredMarks(mediaId: number): Promise<Marks | null> {
     .read()
     .catch(() => null);
 
-  return response?.resource ?? null;
-}
+  if (_.isNil(response) || _.isNil(response.resource)) {
+    return null;
+  }
 
-export function setStoredMarks(
-  animeName: string,
-  episodesInfo: EpisodesInfo[]
-) {
-  const container = getDBContainer();
-
-  episodesInfo.forEach(async ({episode, marks, mediaId}) => {
-    const newItem = {
-      id: mediaId.toString(),
-      animeName,
-      episode,
-      ...marks,
-    } as ItemDefinition;
-
-    const currentItem = await getStoredMarks(mediaId);
-    if (currentItem) {
-      container.item(mediaId.toString(), mediaId).replace(newItem);
-      return;
-    }
-
-    container.items.create(newItem);
-  });
+  const {begin, end} = response.resource;
+  return {begin, end};
 }
 
 const config = {

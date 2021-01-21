@@ -1,7 +1,7 @@
 import express from 'express';
 import _ from 'lodash';
 
-import {getStoredMarks} from './database.js';
+import {getStoredMarks} from './database';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,7 +17,8 @@ const getInfoFromURL = (url: string) => {
 };
 
 app.get('/', async (req, res) => {
-  const url = req.query.toString();
+  const url = req.query?.url?.toString() || '';
+
   try {
     const {mediaId} = getInfoFromURL(url);
     const marks = await getStoredMarks(mediaId);
