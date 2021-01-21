@@ -18,6 +18,7 @@ const getInfoFromURL = (url: string) => {
 
 app.get('/', async (req, res) => {
   const url = req.query?.url?.toString() || '';
+  console.info('Received Request:', {url});
 
   try {
     const {mediaId} = getInfoFromURL(url);
@@ -25,12 +26,15 @@ app.get('/', async (req, res) => {
 
     if (marks === null) {
       res.status(400).send('Episode not processed =/');
+      console.info(`Episode ${url} not processed =/`);
       return;
     }
 
     res.json(marks);
+    console.info('Sending Marks Back', marks, url);
   } catch {
     res.status(400).send('Invalid URL');
+    console.info('Invalid url', url);
   }
 });
 
