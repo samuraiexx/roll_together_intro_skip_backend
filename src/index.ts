@@ -18,7 +18,7 @@ const getInfoFromURL = (url: string) => {
 
 app.get('/', async (req, res) => {
   const url = req.query?.url?.toString() || '';
-  console.info('Received Request:', {url});
+  console.info('Received Request:', url);
 
   try {
     const {mediaId} = getInfoFromURL(url);
