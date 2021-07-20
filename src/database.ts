@@ -17,6 +17,24 @@ function getDBContainer() {
   return container;
 }
 
+export async function getStoredFromEtpGUID(
+  etpGUID: string
+): Promise<Marks | null> {
+  const query = `select * from c where c.etp_guid="${etpGUID}"`;
+  const response = await getDBContainer()
+    .items.query(query)
+    .fetchAll()
+    .catch(() => null);
+  const item = response?.resources?.[0];
+
+  if (_.isNil(item)) {
+    return null;
+  }
+
+  const {begin, end} = item;
+  return {begin, end};
+}
+
 export async function getStoredMarks(mediaId: number): Promise<Marks | null> {
   const response = await getDBContainer()
     .item(mediaId.toString(), mediaId.toString())
